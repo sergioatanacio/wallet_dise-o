@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoVest Wallet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .bg-gradient-warm {
+            background: linear-gradient(135deg, #E6D2B5 0%, #D2B48C 100%);
+        }
+        .bg-gradient-button {
+            background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%);
+        }
+        .bg-gradient-cold {
+            background: linear-gradient(135deg, #4682B4 0%, #20B2AA 100%);
+        }
+    </style>
+</head>
+<body class="bg-[#F5E6D3] p-6 min-h-screen">
+    <div class="max-w-4xl mx-auto space-y-6">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-2 text-[#8B4513]">CryptoVest Wallet</h1>
+            <p class="text-xl text-[#4A3728]">Manage Your Crypto Assets</p>
+        </header>
+
+        <div id="cryptoCards" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Crypto cards will be inserted here -->
+        </div>
+
+        <div class="flex space-x-4">
+            <button class="flex-1 py-2 px-4 rounded-full text-white font-medium bg-gradient-button">
+                <i data-lucide="send" class="inline mr-2"></i>
+                Send
+            </button>
+            <button class="flex-1 py-2 px-4 rounded-full text-white font-medium bg-gradient-cold">
+                <i data-lucide="plus" class="inline mr-2"></i>
+                Receive
+            </button>
+            <button class="flex-1 py-2 px-4 rounded-full bg-white font-medium text-[#8B4513]">
+                <i data-lucide="repeat" class="inline mr-2"></i>
+                Swap
+            </button>
+        </div>
+
+        <div class="bg-white bg-opacity-70 p-4 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold mb-4 text-[#8B4513]">Recent Transactions</h3>
+            <div id="transactions">
+                <!-- Transactions will be inserted here -->
+            </div>
+        </div>
+
+        <div class="p-6 rounded-lg shadow-lg text-white bg-gradient-cold">
+            <h2 class="text-2xl font-bold mb-4">Grow Your Portfolio</h2>
+            <p class="mb-4">Invest in top cryptocurrencies and earn rewards.</p>
+            <button class="bg-white py-2 px-4 rounded-full hover:bg-opacity-90 transition-colors duration-300 flex items-center font-medium text-[#4682B4]">
+                <i data-lucide="dollar-sign" class="mr-2"></i>
+                <span>Explore Investment Options</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Crypto data
+        const cryptos = [
+            { symbol: 'BTC', name: 'Bitcoin', balance: 1.23456789, value: 45678.90, change: 2.5 },
+            { symbol: 'ETH', name: 'Ethereum', balance: 15.6789, value: 3456.78, change: -1.2 },
+        ];
+
+        // Transactions data
+        const transactions = [
+            { type: 'Received', amount: 0.1, crypto: 'BTC', date: '2023-08-21', from: '1A1zP1...' },
+            { type: 'Sent', amount: 0.5, crypto: 'ETH', date: '2023-08-20', to: '0x742d35...' },
+            { type: 'Bought', amount: 0.25, crypto: 'BTC', date: '2023-08-19', price: 40000 },
+        ];
+
+        // Function to create crypto cards
+        function createCryptoCards() {
+            const cardContainer = document.getElementById('cryptoCards');
+            cryptos.forEach(crypto => {
+                const card = document.createElement('div');
+                card.className = 'p-4 rounded-lg shadow-lg bg-gradient-warm';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-lg font-semibold text-[#8B4513]">${crypto.name}</h3>
+                        <span class="text-2xl">${crypto.symbol === 'BTC' ? '<i data-lucide="bitcoin"></i>' : '<i data-lucide="hexagon"></i>'}</span>
+                    </div>
+                    <div class="text-2xl font-bold mb-2 text-[#FF6347]">
+                        ${crypto.balance.toFixed(8)} ${crypto.symbol}
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[#4A3728]">$${crypto.value.toFixed(2)}</span>
+                        <span class="${crypto.change >= 0 ? 'text-green-500' : 'text-red-500'}">${crypto.change}%</span>
+                    </div>
+                `;
+                cardContainer.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // Function to create transaction items
+        function createTransactionItems() {
+            const transactionContainer = document.getElementById('transactions');
+            transactions.forEach(transaction => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between p-2 border-b border-gray-200';
+                item.innerHTML = `
+                    <div class="flex items-center">
+                        <i data-lucide="${transaction.type === 'Received' ? 'repeat' : transaction.type === 'Sent' ? 'send' : 'credit-card'}" 
+                           class="mr-2" style="color: ${transaction.type === 'Received' ? '#4682B4' : transaction.type === 'Sent' ? '#FF6347' : '#FF8C00'}"></i>
+                        <div>
+                            <p class="font-medium text-[#8B4513]">${transaction.type} ${transaction.amount} ${transaction.crypto}</p>
+                            <p class="text-sm text-[#8B7355]">${transaction.date}</p>
+                        </div>
+                    </div>
+                    ${transaction.from ? `<p class="text-sm text-[#8B7355]">From: ${transaction.from}</p>` : ''}
+                    ${transaction.to ? `<p class="text-sm text-[#8B7355]">To: ${transaction.to}</p>` : ''}
+                    ${transaction.price ? `<p class="text-sm text-[#8B7355]">Price: $${transaction.price}</p>` : ''}
+                `;
+                transactionContainer.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        // Initialize the page
+        createCryptoCards();
+        createTransactionItems();
+    </script>
+</body>
+</html>
